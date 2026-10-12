@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "voicedeck-smoke",
+  "version": "1.0.0",
+  "name": "VoiceDeck development smoke test",
+  "environment": "client",
+  "entrypoints": { "client": ["de.tebyte.voicedeck.smoke.MenuSmokeTest"] },
+  "depends": { "voicedeck": "*" }
+}

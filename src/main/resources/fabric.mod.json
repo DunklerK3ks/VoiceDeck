@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "voicedeck",
+  "version": "${version}",
+  "name": "VoiceDeck",
+  "description": "Ingame soundboard and real-time voice effects for Simple Voice Chat.",
+  "authors": ["Tebyte"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["de.tebyte.voicedeck.VoiceDeckClient"],
+    "voicechat": ["de.tebyte.voicedeck.integration.VoiceDeckPlugin"]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  },
+  "suggests": { "voicechat_api": ">=2.6.24" },
+  "breaks": { "voicechat": "<2.6.24", "voicechat_api": "<2.6.24" }
+}

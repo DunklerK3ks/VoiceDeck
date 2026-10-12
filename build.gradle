@@ -1,0 +1,72 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version '1.17.21'
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+base { archivesName = project.archives_base_name }
+
+repositories {
+    maven { url = 'https://maven.maxhenkel.de/repository/public' }
+    maven {
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    compileOnly "de.maxhenkel.voicechat:voicechat-api:${project.voicechat_api_version}"
+    if (!project.hasProperty('withoutVoiceChat')) {
+        runtimeOnly "maven.modrinth:simple-voice-chat:fabric-${project.voicechat_version}"
+        runtimeOnly "de.maxhenkel.voicechat:voicechat-api:${project.voicechat_api_version}:fabric-stub"
+    }
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') { expand 'version': project.version }
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
+    withSourcesJar()
+}
+tasks.withType(JavaCompile).configureEach { options.release = 25 }
+test { useJUnitPlatform() }
+jar { from('LICENSE') { rename { "${it}_${project.archives_base_name}" } } }
+
+loom {
+    runs {
+        client { runDir 'run-26.3'; programArg '--username'; programArg 'VoiceDeckDev' }
+    }
+}
+
+// Separate development-only mod exercises the real rendered screens and exits.
+if (project.hasProperty('smoke')) {
+    sourceSets {
+        smoke {
+            compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+            runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+        }
+    }
+    loom {
+        mods {
+            voicedeck { sourceSet sourceSets.main }
+            'voicedeck-smoke' { sourceSet sourceSets.smoke }
+        }
+        runs {
+            client {
+                source sourceSets.smoke
+                programArgs '--width', '1280', '--height', '720'
+                vmArg "-Dvoicedeck.smoke.withoutVoiceChat=${project.hasProperty('withoutVoiceChat')}"
+            }
+        }
+    }
+}

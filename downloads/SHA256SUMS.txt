@@ -1,0 +1,2 @@
+a0d0ca77297c09e38a6b174e623268079f0bc99aba9f9ae8126ab2cbdef30520  voicedeck-1.1.0+26.3.jar
+5c4436ed5103b93782b60659edddfbbe2e3ebbc9e97ec6016c7e12cd9c402058  VoiceDeck-1.1.0-Fabric-26.3.zip
